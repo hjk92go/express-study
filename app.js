@@ -77,3 +77,50 @@ app.listen(3000, () => {
 //위와 같이 작성하게 되면, 포트번호 3000번에서 실행하겠다는 뜻이 된다.(나중에 우리가 작성한 api서버도 포트번호 3000번으로 접속해야 한다.)
 
 //포트번호란? 서버안에서 실행되늰 여러 프로그램들 중 특정 프로그램을 식별 할 수 있게 해주는 번호
+
+//230611
+//06 리소스란?
+//서버에 저장되어 있는 수많은 정보들을 모드 리소스(Resource)라고 합니다.
+
+//특정 팀에 속한 직원정보 조회하기
+
+//http://localhost:3000/api/members?team=engineering에서
+//?team=engineering이런식으로 team에 값을 넣어주면 된다.
+//이부분을 쿼리라고하는데, Query는 서버에 있는 데이터를 조회할 때 기준을 정하기 위해 사용한다.
+
+app.get("/api/members", (req, res) => {
+  //team이라는 파라미터의 값을 가져오는 코드임
+  const { team } = req.query; // =const team = req.query.team;
+  if (team) {
+    const teamMembers = members.filter((m) => m.team === team);
+    res.send(teamMembers);
+  } else {
+    res.send(members);
+  }
+});
+
+//post리퀘스트를 보내는 방법_새로운 리소스 추가
+
+///api/members 로 들어오는 post리퀘스트 처리가능
+app.post("/api/members", (req, res) => {
+  //추가하게될 정보는 리퀘스트 바디에 들어와있음
+  console.log(req.body); //출력코드
+  //강의에서는 rest client를 이용해서 입력함
+
+  //객체를 추가하는 코드
+  const newMember = req.body;
+  members.push(newMember);
+  res.send(newMember);
+});
+
+//post 리퀘스트에 바디를 담아서 보낼때 추가해야할 코드!
+
+// express 객체의 이 json이라는 메소드는 어떤함수를 리턴함
+// 그 함수는 서버로 온 리퀘스트 바디에 json데이터가 존재할경우에\
+// 그것을 추출해서 리퀘스트 바디의 body프로터피의 값으로 설정해준다.
+// 이런식으로 리퀘스트가 라우트 핸들러에 의해 처리되기 전에
+// 추가적으로 필요한 전처리를 수행하는 함수를 익스프레스에서는 미들웨어라고 한다.
+app.use(express.json()); //이 미들웨어를 추가해줘야댐
+
+//공개오픈소스
+//https://github.com/expressjs/express
